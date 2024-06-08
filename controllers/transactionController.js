@@ -1,14 +1,13 @@
 const { Transaction, Product } = require('../models');
-
 const { sequelize } = require('../models');
-
 const statusMessage = require('../helpers/statusMessage');
 
 const createTransaction = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    const { productId, amount, paymentMethod } = req.body;
-    const product = await Product.findByPk(productId, { transaction: t });
+    const { ProductId, amount, paymentMethod } = req.body;
+
+    const product = await Product.findByPk(ProductId, { transaction: t });
 
     if (!product || product.stock < amount) {
       await t.rollback();
@@ -21,9 +20,10 @@ const createTransaction = async (req, res) => {
     }
 
     const total = product.price * amount;
+
     const transaction = await Transaction.create(
       {
-        UserId: req.user.id,
+        UserId: req.decoded.id,
         ProductId,
         amount,
         total,
@@ -44,22 +44,34 @@ const createTransaction = async (req, res) => {
     );
   } catch (error) {
     await t.rollback();
-    return statusMessage(res, 500, false, 'Internal server error', error);
+    return statusMessage(
+      res,
+      500,
+      false,
+      'Internal server error',
+      error.message
+    );
   }
 };
 
 const getTransaction = async (req, res) => {
   try {
-    const transaction = await Transaction.findAll();
+    const transactions = await Transaction.findAll();
     return statusMessage(
       res,
       200,
       true,
       'Get Transaction successfully',
-      transaction
+      transactions
     );
   } catch (error) {
-    return statusMessage(res, 500, false, 'Internal server error', error);
+    return statusMessage(
+      res,
+      500,
+      false,
+      'Internal server error',
+      error.message
+    );
   }
 };
 

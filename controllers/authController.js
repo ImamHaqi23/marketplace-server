@@ -43,7 +43,7 @@ const login = async (req, res) => {
 
     return statusMessage(res, 200, true, 'Login successfully!!', {
       id: user.id,
-      name: user.username,
+      username: user.username,
       token: `Bearer ${token}`,
     });
   } catch (error) {

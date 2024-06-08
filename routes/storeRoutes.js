@@ -8,10 +8,11 @@ const {
   updateStore,
 } = require('../controllers/storeController');
 const authentication = require('../middlewares/authentication');
-const authorization = require('../middlewares/authorization');
+const { authorizationSeller } = require('../middlewares/authorization');
 
 router.use(authentication);
-router.use(authorization('SELLER'));
+router.use(authorizationSeller);
+
 router.post('/create-store', createStore);
 router.get('/get-all-store', getAllStore);
 router.get('/get-store/:id', getStoreById);

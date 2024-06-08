@@ -1,10 +1,13 @@
 const statusMessage = require('../helpers/statusMessage');
 
-const authorization = (role) => {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      console.log(req.user.role);
-      console.log(role);
+const authorizationBuyer = (req, res, next) => {
+  try {
+    const user = req.decoded;
+    console.log(user.role);
+
+    if (user.role == 'BUYER') {
+      next();
+    } else {
       return statusMessage(
         res,
         401,
@@ -12,8 +15,32 @@ const authorization = (role) => {
         'You do not have permission to perform this action'
       );
     }
-    next();
-  };
+  } catch (error) {
+    return statusMessage(res, 500, false, error.message);
+  }
 };
 
-module.exports = authorization;
+const authorizationSeller = (req, res, next) => {
+  try {
+    const user = req.decoded;
+    console.log(user.role);
+
+    if (user.role === 'SELLER') {
+      next();
+    } else {
+      return statusMessage(
+        res,
+        401,
+        false,
+        'You do not have permission to perform this action'
+      );
+    }
+  } catch (error) {
+    return statusMessage(res, 500, false, error.message);
+  }
+};
+
+module.exports = {
+  authorizationBuyer,
+  authorizationSeller,
+};

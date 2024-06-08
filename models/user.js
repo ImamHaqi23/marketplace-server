@@ -37,13 +37,16 @@ module.exports = (sequelize, DataTypes) => {
             const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$&*])/;
             if (!passwordRegex.test(value)) {
               throw new Error(
-                'Password must be at least 8 characters long, and include at least one uppercase letter, one number, and one special character'
+                'Password must be at least 6 characters long, and include at least one uppercase letter, one number, and one special character'
               );
             }
           },
         },
       },
-      role: DataTypes.ENUM('SELLER', 'BUYER'),
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: 'BUYER',
+      },
     },
     {
       sequelize,
